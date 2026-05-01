@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>光のアーカイブ</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Hiragino Sans', 'Yu Gothic', sans-serif;
+            background-color: #2d2d2d;
+            color: #ffffff;
+            line-height: 1.6;
+        }
+
+        /* 一覧画面のスタイル */
+        .list-view {
+            padding: 40px 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 300;
+            color: #ffffff;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            color: #aaa;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .light-card {
+            background: #3a3a3a;
+            border-radius: 8px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 1px solid #4a4a4a;
+        }
+
+        .light-card:hover {
+            background: #4a4a4a;
+            transform: translateY(-2px);
+        }
+
+        .light-image {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 6px;
+            margin-bottom: 15px;
+        }
+
+        .light-title {
+            font-size: 1.1rem;
+            font-weight: 500;
+            margin-bottom: 5px;
+        }
+
+        .light-location {
+            font-size: 0.9rem;
+            color: #aaa;
+        }
+
+        /* 詳細画面のスタイル */
+        .detail-view {
+            display: none;
+            height: 100vh;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .back-button {
+            position: absolute;
+            top: 30px;
+            left: 30px;
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            backdrop-filter: blur(10px);
+            transition: background 0.3s ease;
+        }
+
+        .back-button:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .detail-content {
+            display: flex;
+            height: 100vh;
+            align-items: center;
+        }
+
+        .detail-text {
+            flex: 0.4;
+            padding: 0 40px;
+            max-width: 400px;
+        }
+
+        .detail-title {
+            font-size: 1.8rem;
+            font-weight: 300;
+            margin-bottom: 20px;
+            line-height: 1.2;
+        }
+
+        .detail-description {
+            font-size: 0.9rem;
+            line-height: 1.6;
+            color: #ccc;
+            margin-bottom: 25px;
+        }
+
+        .detail-meta {
+            font-size: 0.75rem;
+            color: #999;
+            line-height: 1.4;
+        }
+
+        .detail-specs {
+            margin: 15px 0;
+            font-size: 0.75rem;
+            color: #aaa;
+            line-height: 1.5;
+        }
+
+        .detail-specs div {
+            margin-bottom: 5px;
+        }
+
+        .light-visualization {
+            flex: 0.6;
+            height: 100vh;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .light-beam {
+            position: relative;
+            width: 400px;
+            height: 600px;
+        }
+
+        /* 消灯スイッチ */
+        .light-switch {
+            position: absolute;
+            bottom: 40px;
+            right: 40px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.8rem;
+            color: #999;
+        }
+
+        .switch-toggle {
+            position: relative;
+            width: 50px;
+            height: 26px;
+            background: #444;
+            border-radius: 13px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .switch-toggle.active {
+            background: #ffd700;
+        }
+
+        .switch-slider {
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 22px;
+            height: 22px;
+            background: white;
+            border-radius: 50%;
+            transition: transform 0.3s ease;
+        }
+
+        .switch-toggle.active .switch-slider {
+            transform: translateX(24px);
+        }
+
+        .light-source {
+            position: absolute;
+            top: 50px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 60px;
+            background: #5a5a5a;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .light-bulb {
+            width: 20px;
+            height: 20px;
+            background: #fff;
+            border-radius: 50%;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.8);
+            transition: all 0.3s ease;
+        }
+
+        .light-bulb.off {
+            background: #555;
+            box-shadow: none;
+        }
+
+        .beam {
+            position: absolute;
+            top: 110px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-style: solid;
+            transition: opacity 0.3s ease;
+        }
+
+        .beam.off {
+            opacity: 0;
+        }
+
+        /* 光のパターン別スタイル */
+        .beam-wide {
+            border-left: 120px solid transparent;
+            border-right: 120px solid transparent;
+            border-top: 350px solid rgba(255, 200, 100, 0.3);
+        }
+
+        .beam-narrow {
+            border-left: 60px solid transparent;
+            border-right: 60px solid transparent;
+            border-top: 350px solid rgba(255, 220, 150, 0.4);
+        }
+
+        .beam-focused {
+            border-left: 30px solid transparent;
+            border-right: 30px solid transparent;
+            border-top: 350px solid rgba(255, 240, 200, 0.5);
+        }
+
+        .beam-soft {
+            border-left: 150px solid transparent;
+            border-right: 150px solid transparent;
+            border-top: 300px solid rgba(255, 180, 80, 0.2);
+        }
+
+        @media (max-width: 768px) {
+            .detail-content {
+                flex-direction: column;
+                padding: 20px;
+            }
+            
+            .detail-text {
+                padding: 20px;
+                text-align: center;
+            }
+            
+            .detail-title {
+                font-size: 2rem;
+            }
+            
+            .light-visualization {
+                height: 50vh;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 一覧画面 -->
+    <div class="list-view" id="listView">
+        <div class="header">
+            <h1>光のアーカイブ</h1>
+            <p>光り方や色を可視化</p>
+        </div>
+
+        <div class="grid">
+            <div class="light-card" onclick="showDetail(0)">
+                <img src="https://images.unsplash.com/photo-1513475382585-d06e58bcb0e0?w=400&h=200&fit=crop" alt="レトロ喫茶の裸電球" class="light-image">
+                <div class="light-title">温かな裸電球</div>
+                <div class="light-location">レトロ喫茶「時の調べ」</div>
+            </div>
+
+            <div class="light-card" onclick="showDetail(1)">
+                <img src="https://images.unsplash.com/photo-1524484485831-a92ffc0de03f?w=400&h=200&fit=crop" alt="駅舎のペンダントライト" class="light-image">
+                <div class="light-title">ペンダントライト</div>
+                <div class="light-location">谷中駅舎</div>
+            </div>
+
+            <div class="light-card" onclick="showDetail(2)">
+                <img src="https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=200&fit=crop" alt="中華料理店の赤い提灯" class="light-image">
+                <div class="light-title">赤い提灯</div>
+                <div class="light-location">中華料理「福源楼」</div>
+            </div>
+
+            <div class="light-card" onclick="showDetail(3)">
+                <img src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&h=200&fit=crop" alt="モダンカフェのスポットライト" class="light-image">
+                <div class="light-title">LEDスポットライト</div>
+                <div class="light-location">カフェ「MONO」</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 詳細画面 -->
+    <div class="detail-view" id="detailView">
+        <button class="back-button" onclick="showList()">← 一覧に戻る</button>
+        
+        <div class="detail-content">
+            <div class="detail-text">
+                <h2 class="detail-title" id="detailTitle">光り方や色を可視化</h2>
+                <p class="detail-description" id="detailDescription">
+                    場所とか時間のメモを<br>
+                    あいてるところとかに書く
+                </p>
+                <div class="detail-specs" id="detailSpecs"></div>
+                <div class="detail-meta" id="detailMeta"></div>
+            </div>
+            
+            <div class="light-visualization">
+                <div class="light-beam">
+                    <div class="light-source">
+                        <div class="light-bulb" id="lightBulb"></div>
+                    </div>
+                    <div class="beam" id="lightBeam"></div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="light-switch">
+            <span>消灯</span>
+            <div class="switch-toggle active" id="lightSwitch">
+                <div class="switch-slider"></div>
+            </div>
+            <span>点灯</span>
+        </div>
+    </div>
+
+    <script>
+        const lightData = [
+            {
+                title: "温かな裸電球の光",
+                description: "木製テーブルに柔らかな影を落とし、読書に最適な落ち着いた空間を演出している。",
+                specs: "色温度: 2700K（電球色）<br>光度: 800lm<br>拡散角: 360°<br>高さ: 2.4m",
+                meta: "レトロ喫茶「時の調べ」<br>東京都文京区根津<br>2024年4月15日 15:30",
+                beamType: "beam-wide"
+            },
+            {
+                title: "ペンダントライトの集中光",
+                description: "昭和レトロなガラス製シェード。下方向に集中した光が床面をしっかりと照らしている。",
+                specs: "色温度: 3000K（温白色）<br>光度: 1200lm<br>拡散角: 120°<br>高さ: 3.2m",
+                meta: "谷中駅舎<br>東京都台東区谷中<br>2024年3月22日 18:45",
+                beamType: "beam-narrow"
+            },
+            {
+                title: "提灯の拡散光",
+                description: "和紙を通した温かな光。複数並んで設置されており、空間全体に優雅な雰囲気を作り出している。",
+                specs: "色温度: 2500K（電球色）<br>光度: 600lm<br>拡散角: 300°<br>高さ: 2.8m",
+                meta: "中華料理「福源楼」<br>横浜市中華街<br>2024年4月8日 19:15",
+                beamType: "beam-soft"
+            },
+            {
+                title: "LEDスポットライト",
+                description: "調光可能でアート作品を照らすために設計されている。明確な光と影のコントラストを作り出す。",
+                specs: "色温度: 4000K（昼白色）<br>光度: 2000lm<br>拡散角: 30°<br>高さ: 3.0m",
+                meta: "カフェ「MONO」<br>東京都渋谷区表参道<br>2024年4月12日 14:20",
+                beamType: "beam-focused"
+            }
+        ];
+
+        let isLightOn = true;
+
+        function showDetail(index) {
+            const data = lightData[index];
+            
+            document.getElementById('detailTitle').innerHTML = data.title;
+            document.getElementById('detailDescription').innerHTML = data.description;
+            document.getElementById('detailSpecs').innerHTML = data.specs;
+            document.getElementById('detailMeta').innerHTML = data.meta;
+            
+            const beam = document.getElementById('lightBeam');
+            beam.className = `beam ${data.beamType}`;
+            
+            // ライトを点灯状態にリセット
+            isLightOn = true;
+            updateLightState();
+            
+            document.getElementById('listView').style.display = 'none';
+            document.getElementById('detailView').style.display = 'block';
+        }
+
+        function showList() {
+            document.getElementById('listView').style.display = 'block';
+            document.getElementById('detailView').style.display = 'none';
+        }
+
+        function toggleLight() {
+            isLightOn = !isLightOn;
+            updateLightState();
+        }
+
+        function updateLightState() {
+            const bulb = document.getElementById('lightBulb');
+            const beam = document.getElementById('lightBeam');
+            const switchElement = document.getElementById('lightSwitch');
+            
+            if (isLightOn) {
+                bulb.classList.remove('off');
+                beam.classList.remove('off');
+                switchElement.classList.add('active');
+            } else {
+                bulb.classList.add('off');
+                beam.classList.add('off');
+                switchElement.classList.remove('active');
+            }
+        }
+
+        // スイッチのイベントリスナー
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('lightSwitch').addEventListener('click', toggleLight);
+        });
+    </script>
+</body>
+</html>
