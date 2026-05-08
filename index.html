@@ -275,6 +275,31 @@
             border-top: 300px solid rgba(255, 180, 80, 0.2);
         }
 
+        .beam-double {
+            position: relative;
+        }
+
+        .beam-double::before,
+        .beam-double::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            width: 0;
+            height: 0;
+            border-style: solid;
+            border-left: 50px solid transparent;
+            border-right: 50px solid transparent;
+            border-top: 320px solid rgba(150, 255, 150, 0.3);
+        }
+
+        .beam-double::before {
+            left: -80px;
+        }
+
+        .beam-double::after {
+            right: -80px;
+        }
+
         @media (max-width: 768px) {
             .detail-content {
                 flex-direction: column;
@@ -327,6 +352,12 @@
                 <img src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&h=200&fit=crop" alt="モダンカフェのスポットライト" class="light-image">
                 <div class="light-title">LEDスポットライト</div>
                 <div class="light-location">カフェ「MONO」</div>
+            </div>
+
+            <div class="light-card" onclick="showDetail(4)">
+                <img src="https://images.unsplash.com/photo-1577563908411-5077b6dc7624?w=400&h=200&fit=crop" alt="大正ロマン喫茶店のアンティークランプ" class="light-image">
+                <div class="light-title">緑のガラスシェード照明</div>
+                <div class="light-location">金沢・大正ロマン喫茶店</div>
             </div>
         </div>
     </div>
@@ -394,6 +425,13 @@
                 specs: "色温度: 4000K（昼白色）<br>光度: 2000lm<br>拡散角: 30°<br>高さ: 3.0m",
                 meta: "カフェ「MONO」<br>東京都渋谷区表参道<br>2024年4月12日 14:20",
                 beamType: "beam-focused"
+            },
+            {
+                title: "大正ロマンのアンティーク照明",
+                description: "緑のガラスシェードが美しい2灯式のテーブルランプ。これがあることでテーブルが一気に昔のかわいさが出せている。",
+                specs: "色温度: 2800K（電球色）<br>材質: 緑色ガラスシェード<br>スタイル: アール・ヌーヴォー調<br>高さ: テーブル上約40cm",
+                meta: "大正ロマン喫茶店<br>石川県金沢市<br>2024年4月上旬",
+                beamType: "beam-double"
             }
         ];
 
