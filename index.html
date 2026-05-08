@@ -160,6 +160,40 @@
             justify-content: center;
         }
 
+        /* 実写版の可視化スタイル */
+        .photo-visualization {
+            width: 100%;
+            height: 100vh;
+            position: relative;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            transition: filter 0.5s ease, brightness 0.5s ease;
+            display: none;
+        }
+
+        .photo-visualization.active {
+            display: block;
+        }
+
+        .photo-visualization.off {
+            filter: brightness(0.2) contrast(0.8);
+        }
+
+        .light-overlay {
+            position: absolute;
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(255, 220, 100, 0.3) 0%, rgba(255, 220, 100, 0.1) 50%, transparent 100%);
+            transition: opacity 0.5s ease;
+            pointer-events: none;
+        }
+
+        .light-overlay.off {
+            opacity: 0;
+        }
+
         .light-beam {
             position: relative;
             width: 400px;
@@ -176,6 +210,27 @@
             gap: 10px;
             font-size: 0.8rem;
             color: #999;
+        }
+
+        /* 表示切替ボタン */
+        .view-toggle {
+            position: absolute;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            backdrop-filter: blur(10px);
+            transition: background 0.3s ease;
+        }
+
+        .view-toggle:hover {
+            background: rgba(255, 255, 255, 0.2);
         }
 
         .switch-toggle {
@@ -378,14 +433,23 @@
             </div>
             
             <div class="light-visualization">
-                <div class="light-beam">
+                <!-- シルエット版（既存） -->
+                <div class="light-beam" id="schematicView">
                     <div class="light-source">
                         <div class="light-bulb" id="lightBulb"></div>
                     </div>
                     <div class="beam" id="lightBeam"></div>
                 </div>
+                
+                <!-- 実写版 -->
+                <div class="photo-visualization" id="photoView">
+                    <div class="light-overlay" id="lightOverlay1" style="top: 30%; left: 35%;"></div>
+                    <div class="light-overlay" id="lightOverlay2" style="top: 30%; right: 35%;"></div>
+                </div>
             </div>
         </div>
+        
+        <button class="view-toggle" id="viewToggle">📸 実写表示</button>
         
         <div class="light-switch">
             <span>消灯</span>
@@ -431,13 +495,18 @@
                 description: "緑のガラスシェードが美しい2灯式のテーブルランプ。これがあることでテーブルが一気に昔のかわいさが出せている。",
                 specs: "色温度: 2800K（電球色）<br>材質: 緑色ガラスシェード<br>スタイル: アール・ヌーヴォー調<br>高さ: テーブル上約40cm",
                 meta: "大正ロマン喫茶店<br>石川県金沢市<br>2024年4月上旬",
-                beamType: "beam-double"
+                beamType: "beam-double",
+                photoUrl: "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAX/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwCdABmX/9k="
             }
         ];
 
         let isLightOn = true;
+        let isPhotoView = false;
+
+        let currentLightIndex = 0;
 
         function showDetail(index) {
+            currentLightIndex = index;
             const data = lightData[index];
             
             document.getElementById('detailTitle').innerHTML = data.title;
@@ -448,9 +517,20 @@
             const beam = document.getElementById('lightBeam');
             beam.className = `beam ${data.beamType}`;
             
-            // ライトを点灯状態にリセット
+            // 実写版の背景設定
+            const photoView = document.getElementById('photoView');
+            if (data.photoUrl) {
+                photoView.style.backgroundImage = `url(${data.photoUrl})`;
+                document.getElementById('viewToggle').style.display = 'block';
+            } else {
+                document.getElementById('viewToggle').style.display = 'none';
+            }
+            
+            // 初期状態にリセット
             isLightOn = true;
+            isPhotoView = false;
             updateLightState();
+            updateViewMode();
             
             document.getElementById('listView').style.display = 'none';
             document.getElementById('detailView').style.display = 'block';
@@ -470,21 +550,49 @@
             const bulb = document.getElementById('lightBulb');
             const beam = document.getElementById('lightBeam');
             const switchElement = document.getElementById('lightSwitch');
+            const photoView = document.getElementById('photoView');
+            const overlays = document.querySelectorAll('.light-overlay');
             
             if (isLightOn) {
                 bulb.classList.remove('off');
                 beam.classList.remove('off');
                 switchElement.classList.add('active');
+                photoView.classList.remove('off');
+                overlays.forEach(overlay => overlay.classList.remove('off'));
             } else {
                 bulb.classList.add('off');
                 beam.classList.add('off');
                 switchElement.classList.remove('active');
+                photoView.classList.add('off');
+                overlays.forEach(overlay => overlay.classList.add('off'));
+            }
+        }
+
+        function toggleView() {
+            isPhotoView = !isPhotoView;
+            updateViewMode();
+        }
+
+        function updateViewMode() {
+            const schematicView = document.getElementById('schematicView');
+            const photoView = document.getElementById('photoView');
+            const toggleButton = document.getElementById('viewToggle');
+            
+            if (isPhotoView) {
+                schematicView.style.display = 'none';
+                photoView.classList.add('active');
+                toggleButton.innerHTML = '🔧 シルエット表示';
+            } else {
+                schematicView.style.display = 'block';
+                photoView.classList.remove('active');
+                toggleButton.innerHTML = '📸 実写表示';
             }
         }
 
         // スイッチのイベントリスナー
         document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('lightSwitch').addEventListener('click', toggleLight);
+            document.getElementById('viewToggle').addEventListener('click', toggleView);
         });
     </script>
 </body>
