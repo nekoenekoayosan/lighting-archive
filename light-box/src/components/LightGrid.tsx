@@ -24,14 +24,13 @@ export function LightGrid() {
         setLoading(false)
       }
     }
-
     fetchLights()
   }, [])
 
   if (loading) {
     return (
       <div className="flex justify-center items-center h-64">
-        <div className="text-gray-400">読み込み中...</div>
+        <p className="font-noto text-sm text-white/40 tracking-widest">読み込み中</p>
       </div>
     )
   }
@@ -39,7 +38,7 @@ export function LightGrid() {
   if (error) {
     return (
       <div className="flex justify-center items-center h-64">
-        <div className="text-red-400">{error}</div>
+        <p className="font-noto text-sm text-red-400">{error}</p>
       </div>
     )
   }
@@ -47,15 +46,15 @@ export function LightGrid() {
   if (lights.length === 0) {
     return (
       <div className="flex justify-center items-center h-64">
-        <div className="text-gray-400">照明データが見つかりません</div>
+        <p className="font-noto text-sm text-white/40 tracking-widest">照明データが見つかりません</p>
       </div>
     )
   }
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 max-w-7xl mx-auto">
-      {lights.map((light) => (
-        <LightCard key={light.id} light={light} />
+    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-4 gap-y-10 max-w-7xl mx-auto">
+      {lights.map((light, index) => (
+        <LightCard key={light.id} light={light} index={index} />
       ))}
     </div>
   )
@@ -63,34 +62,43 @@ export function LightGrid() {
 
 interface LightCardProps {
   light: Light
+  index: number
 }
 
-function LightCard({ light }: LightCardProps) {
+function LightCard({ light, index }: LightCardProps) {
   const [isHovered, setIsHovered] = useState(false)
 
   return (
     <Link href={`/lights/${light.id}`}>
-      <div 
-        className="light-card bg-[#3d3d3d] rounded-lg overflow-hidden cursor-pointer"
+      <div
+        className="group cursor-pointer"
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
         onTouchStart={() => setIsHovered(true)}
         onTouchEnd={() => setIsHovered(false)}
       >
-        <div className="aspect-[4/3] relative bg-[#333333]">
+        {/* 写真 — カード背景なし、シャープな角 */}
+        <div className="aspect-[4/3] relative overflow-hidden">
           <Image
             src={isHovered ? light.image_on : light.image_off}
             alt={`${light.name} - ${isHovered ? '点灯' : '消灯'}`}
             fill
-            className="object-cover transition-opacity duration-300"
-            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
+            className="object-cover transition-opacity duration-500"
+            sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
           />
         </div>
-        <div className="p-4">
-          <h3 className="font-noto font-medium text-white text-lg mb-1">
-            {light.name}
-          </h3>
-          <p className="font-noto text-gray-400 text-sm">
+
+        {/* キャプション — 図録スタイル */}
+        <div className="mt-2.5 border-t border-white/15 pt-2">
+          <div className="flex items-baseline gap-2">
+            <span className="font-noto text-[10px] text-white/35 tabular-nums tracking-wider">
+              {String(index + 1).padStart(2, '0')}
+            </span>
+            <span className="font-noto text-sm text-white/90 leading-snug">
+              {light.name}
+            </span>
+          </div>
+          <p className="font-noto text-[11px] text-white/45 mt-0.5 pl-5">
             {light.location}
           </p>
         </div>
