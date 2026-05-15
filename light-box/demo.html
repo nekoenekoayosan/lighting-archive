@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="ja" class="h-full antialiased">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>light box — 照明アーカイブサイト</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        :root {
+            --background: #1a1a1a;
+            --background-card: #222222;
+            --foreground: #ffffff;
+            --foreground-muted: #a0a0a0;
+        }
+
+        body {
+            background: var(--background);
+            color: var(--foreground);
+            font-family: 'Noto Sans JP', sans-serif;
+        }
+
+        .font-ciclo {
+            font-family: serif;
+        }
+
+        .font-noto {
+            font-family: 'Noto Sans JP', sans-serif;
+        }
+
+        /* ホバー時のトランジション */
+        .light-card {
+            transition: all 0.3s ease;
+        }
+
+        .light-card:hover {
+            transform: translateY(-4px);
+        }
+
+        /* 物理スイッチ風デザイン */
+        .physical-switch {
+            position: relative;
+            width: 60px;
+            height: 30px;
+            background-color: #333;
+            border: 2px solid #555;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .physical-switch::before {
+            content: "";
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 22px;
+            height: 22px;
+            background-color: #fff;
+            border-radius: 50%;
+            transition: transform 0.3s ease;
+        }
+
+        .physical-switch.on {
+            background-color: #4ade80;
+        }
+
+        .physical-switch.on::before {
+            transform: translateX(30px);
+        }
+    </style>
+</head>
+<body class="min-h-full flex flex-col bg-gray-900 text-white font-noto">
+    <div class="min-h-screen bg-gray-900">
+        <!-- ヘッダー -->
+        <header class="py-8 px-6 text-center">
+            <h1 class="font-ciclo text-4xl md:text-5xl text-white tracking-wide">
+                light box
+            </h1>
+        </header>
+
+        <!-- メインコンテンツ -->
+        <main class="px-6 pb-12">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 max-w-7xl mx-auto">
+                
+                <!-- サンプル照明カード1 -->
+                <div class="light-card bg-gray-800 rounded-lg overflow-hidden cursor-pointer" 
+                     onmouseover="toggleImage(this, true)" 
+                     onmouseout="toggleImage(this, false)">
+                    <div class="aspect-[4/3] relative bg-gray-700 flex items-center justify-center">
+                        <div class="w-full h-full bg-gradient-to-br from-yellow-200 to-orange-300 flex items-center justify-center text-gray-800 font-bold transition-all duration-300" 
+                             data-on="true">
+                            点灯状態
+                        </div>
+                    </div>
+                    <div class="p-4">
+                        <h3 class="font-noto font-medium text-white text-lg mb-1">
+                            廊下の蛍光灯
+                        </h3>
+                        <p class="font-noto text-gray-400 text-sm">
+                            大学図書館
+                        </p>
+                    </div>
+                </div>
+
+                <!-- サンプル照明カード2 -->
+                <div class="light-card bg-gray-800 rounded-lg overflow-hidden cursor-pointer" 
+                     onmouseover="toggleImage(this, true)" 
+                     onmouseout="toggleImage(this, false)">
+                    <div class="aspect-[4/3] relative bg-gray-700 flex items-center justify-center">
+                        <div class="w-full h-full bg-gradient-to-br from-blue-200 to-blue-400 flex items-center justify-center text-gray-800 font-bold transition-all duration-300" 
+                             data-on="true">
+                            点灯状態
+                        </div>
+                    </div>
+                    <div class="p-4">
+                        <h3 class="font-noto font-medium text-white text-lg mb-1">
+                            階段の誘導灯
+                        </h3>
+                        <p class="font-noto text-gray-400 text-sm">
+                            駅構内
+                        </p>
+                    </div>
+                </div>
+
+                <!-- サンプル照明カード3 -->
+                <div class="light-card bg-gray-800 rounded-lg overflow-hidden cursor-pointer" 
+                     onmouseover="toggleImage(this, true)" 
+                     onmouseout="toggleImage(this, false)">
+                    <div class="aspect-[4/3] relative bg-gray-700 flex items-center justify-center">
+                        <div class="w-full h-full bg-gradient-to-br from-green-200 to-green-400 flex items-center justify-center text-gray-800 font-bold transition-all duration-300" 
+                             data-on="true">
+                            点灯状態
+                        </div>
+                    </div>
+                    <div class="p-4">
+                        <h3 class="font-noto font-medium text-white text-lg mb-1">
+                            街路灯
+                        </h3>
+                        <p class="font-noto text-gray-400 text-sm">
+                            商店街
+                        </p>
+                    </div>
+                </div>
+
+                <!-- サンプル照明カード4 -->
+                <div class="light-card bg-gray-800 rounded-lg overflow-hidden cursor-pointer" 
+                     onmouseover="toggleImage(this, true)" 
+                     onmouseout="toggleImage(this, false)">
+                    <div class="aspect-[4/3] relative bg-gray-700 flex items-center justify-center">
+                        <div class="w-full h-full bg-gradient-to-br from-purple-200 to-purple-400 flex items-center justify-center text-gray-800 font-bold transition-all duration-300" 
+                             data-on="true">
+                            点灯状態
+                        </div>
+                    </div>
+                    <div class="p-4">
+                        <h3 class="font-noto font-medium text-white text-lg mb-1">
+                            看板照明
+                        </h3>
+                        <p class="font-noto text-gray-400 text-sm">
+                            カフェ
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 詳細ページのデモ -->
+            <div class="max-w-6xl mx-auto mt-16 pt-16 border-t border-gray-700">
+                <h2 class="font-ciclo text-3xl text-white mb-8 text-center">詳細ページのデモ</h2>
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    <!-- 照明の写真とスイッチ -->
+                    <div class="lg:col-span-2">
+                        <div class="relative">
+                            <!-- メイン写真 -->
+                            <div class="aspect-[4/3] relative bg-gray-800 rounded-lg overflow-hidden mb-6 flex items-center justify-center">
+                                <div id="detailImage" class="w-full h-full bg-gradient-to-br from-yellow-200 to-orange-300 flex items-center justify-center text-gray-800 font-bold text-2xl transition-all duration-500">
+                                    点灯状態
+                                </div>
+                            </div>
+
+                            <!-- 物理スイッチ -->
+                            <div class="flex justify-center">
+                                <div class="flex flex-col items-center gap-3">
+                                    <button id="switchButton" class="physical-switch on" onclick="toggleDetailLight()">
+                                    </button>
+                                    <span id="switchStatus" class="text-gray-400 text-sm font-noto">
+                                        ON
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 照明の詳細情報 -->
+                    <div class="lg:col-span-1">
+                        <div class="bg-gray-800 rounded-lg p-6">
+                            <h1 class="font-noto text-2xl md:text-3xl font-bold text-white mb-4">
+                                廊下の蛍光灯
+                            </h1>
+                            
+                            <div class="space-y-4">
+                                <div>
+                                    <h3 class="font-noto font-medium text-gray-400 mb-2">場所</h3>
+                                    <p class="font-noto text-white">大学図書館</p>
+                                </div>
+
+                                <div>
+                                    <h3 class="font-noto font-medium text-gray-400 mb-2">カテゴリ</h3>
+                                    <span class="inline-block bg-gray-700 text-white px-3 py-1 rounded-full text-sm font-noto">
+                                        屋内
+                                    </span>
+                                </div>
+
+                                <div>
+                                    <h3 class="font-noto font-medium text-gray-400 mb-2">撮影日</h3>
+                                    <p class="font-noto text-white">
+                                        2024年5月10日
+                                    </p>
+                                </div>
+
+                                <div>
+                                    <h3 class="font-noto font-medium text-gray-400 mb-2">空間における役割</h3>
+                                    <p class="font-noto text-white leading-relaxed">
+                                        通路の安全な移動を確保し、空間全体に均一な明るさを提供している。夜間でも利用者が安心して歩けるよう設計されている。
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        let detailLightOn = true;
+
+        function toggleImage(card, isHovered) {
+            const imageDiv = card.querySelector('[data-on]');
+            if (isHovered) {
+                imageDiv.style.background = 'linear-gradient(to bottom right, #374151, #1f2937)';
+                imageDiv.textContent = '消灯状態';
+                imageDiv.style.color = '#9ca3af';
+            } else {
+                const colors = [
+                    'linear-gradient(to bottom right, #fef3c7, #fed7aa)',
+                    'linear-gradient(to bottom right, #dbeafe, #93c5fd)',
+                    'linear-gradient(to bottom right, #dcfce7, #86efac)',
+                    'linear-gradient(to bottom right, #f3e8ff, #c084fc)'
+                ];
+                const cardIndex = Array.from(card.parentElement.children).indexOf(card);
+                imageDiv.style.background = colors[cardIndex % colors.length];
+                imageDiv.textContent = '点灯状態';
+                imageDiv.style.color = '#374151';
+            }
+        }
+
+        function toggleDetailLight() {
+            detailLightOn = !detailLightOn;
+            const imageDiv = document.getElementById('detailImage');
+            const switchButton = document.getElementById('switchButton');
+            const switchStatus = document.getElementById('switchStatus');
+
+            if (detailLightOn) {
+                imageDiv.style.background = 'linear-gradient(to bottom right, #fef3c7, #fed7aa)';
+                imageDiv.textContent = '点灯状態';
+                imageDiv.style.color = '#374151';
+                switchButton.classList.add('on');
+                switchStatus.textContent = 'ON';
+            } else {
+                imageDiv.style.background = 'linear-gradient(to bottom right, #374151, #1f2937)';
+                imageDiv.textContent = '消灯状態';
+                imageDiv.style.color = '#9ca3af';
+                switchButton.classList.remove('on');
+                switchStatus.textContent = 'OFF';
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="ja" class="h-full antialiased">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>light box — 照明アーカイブサイト</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        :root {
+            --background: #1a1a1a;
+            --background-card: #222222;
+            --foreground: #ffffff;
+            --foreground-muted: #a0a0a0;
+        }
+
+        body {
+            background: var(--background);
+            color: var(--foreground);
+            font-family: 'Noto Sans JP', sans-serif;
+        }
+
+        .font-ciclo {
+            font-family: serif;
+        }
+
+        .font-noto {
+            font-family: 'Noto Sans JP', sans-serif;
+        }
+
+        /* ホバー時のトランジション */
+        .light-card {
+            transition: all 0.3s ease;
+        }
+
+        .light-card:hover {
+            transform: translateY(-4px);
+        }
+
+        /* 物理スイッチ風デザイン */
+        .physical-switch {
+            position: relative;
+            width: 60px;
+            height: 30px;
+            background-color: #333;
+            border: 2px solid #555;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .physical-switch::before {
+            content: "";
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 22px;
+            height: 22px;
+            background-color: #fff;
+            border-radius: 50%;
+            transition: transform 0.3s ease;
+        }
+
+        .physical-switch.on {
+            background-color: #4ade80;
+        }
+
+        .physical-switch.on::before {
+            transform: translateX(30px);
+        }
+
+        .loading {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 200px;
+            color: #9ca3af;
+        }
+
+        .error {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 200px;
+            color: #ef4444;
+        }
+    </style>
+</head>
+<body class="min-h-full flex flex-col bg-gray-900 text-white font-noto">
+    <div class="min-h-screen bg-gray-900">
+        <!-- ヘッダー -->
+        <header class="py-8 px-6 text-center">
+            <h1 class="font-ciclo text-4xl md:text-5xl text-white tracking-wide">
+                light box
+            </h1>
+        </header>
+
+        <!-- メインコンテンツ -->
+        <main class="px-6 pb-12">
+            <div id="lightGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 max-w-7xl mx-auto">
+                <div class="loading">読み込み中...</div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // NOTE: 実際の環境変数は.env.localから読み込まれます
+        // このHTMLファイルでは動作テスト用にプレースホルダーを使用
+        
+        // デモ用のサンプルデータ（実際のSupabaseデータの代わり）
+        const sampleLights = [
+            {
+                id: 1,
+                name: '廊下の蛍光灯',
+                location: '大学図書館',
+                image_on: 'https://via.placeholder.com/400x300/FEF3C7/374151?text=点灯状態',
+                image_off: 'https://via.placeholder.com/400x300/374151/9CA3AF?text=消灯状態',
+                space_type: '屋内',
+                role_memo: '通路の安全な移動を確保し、空間全体に均一な明るさを提供している。夜間でも利用者が安心して歩けるよう設計されている。'
+            },
+            {
+                id: 2,
+                name: '階段の誘導灯',
+                location: '駅構内',
+                image_on: 'https://via.placeholder.com/400x300/DBEAFE/374151?text=点灯状態',
+                image_off: 'https://via.placeholder.com/400x300/374151/9CA3AF?text=消灯状態',
+                space_type: '屋内',
+                role_memo: '緊急時の避難路を明示し、利用者の安全を確保する重要な役割を担っている。'
+            },
+            {
+                id: 3,
+                name: '街路灯',
+                location: '商店街',
+                image_on: 'https://via.placeholder.com/400x300/DCFCE7/374151?text=点灯状態',
+                image_off: 'https://via.placeholder.com/400x300/374151/9CA3AF?text=消灯状態',
+                space_type: '屋外',
+                role_memo: '夜間の歩行者の安全を確保し、商店街の活気ある雰囲気を演出している。'
+            },
+            {
+                id: 4,
+                name: '看板照明',
+                location: 'カフェ',
+                image_on: 'https://via.placeholder.com/400x300/F3E8FF/374151?text=点灯状態',
+                image_off: 'https://via.placeholder.com/400x300/374151/9CA3AF?text=消灯状態',
+                space_type: '屋外',
+                role_memo: '店舗の存在を知らせ、ブランドイメージを表現する重要な要素となっている。'
+            }
+        ];
+
+        let currentLight = sampleLights[0];
+        let isDetailLightOn = true;
+
+        function renderLightGrid() {
+            const gridElement = document.getElementById('lightGrid');
+            
+            const gridHTML = sampleLights.map(light => `
+                <div class="light-card bg-gray-800 rounded-lg overflow-hidden cursor-pointer" 
+                     onclick="showDetail(${light.id})"
+                     onmouseover="toggleCardImage(this, '${light.image_off}')" 
+                     onmouseout="toggleCardImage(this, '${light.image_on}')">
+                    <div class="aspect-[4/3] relative bg-gray-700 flex items-center justify-center">
+                        <img src="${light.image_on}" alt="${light.name}" 
+                             class="w-full h-full object-cover transition-opacity duration-300">
+                    </div>
+                    <div class="p-4">
+                        <h3 class="font-noto font-medium text-white text-lg mb-1">
+                            ${light.name}
+                        </h3>
+                        <p class="font-noto text-gray-400 text-sm">
+                            ${light.location}
+                        </p>
+                    </div>
+                </div>
+            `).join('');
+
+            gridElement.innerHTML = gridHTML + `
+                <div class="col-span-full mt-16 pt-16 border-t border-gray-700">
+                    <h2 class="font-ciclo text-3xl text-white mb-8 text-center">詳細ページのデモ</h2>
+                    <div id="lightDetail"></div>
+                </div>
+            `;
+
+            showDetail(1); // 最初の照明の詳細を表示
+        }
+
+        function toggleCardImage(card, newSrc) {
+            const img = card.querySelector('img');
+            img.src = newSrc;
+        }
+
+        function showDetail(lightId) {
+            currentLight = sampleLights.find(light => light.id === lightId);
+            if (!currentLight) return;
+
+            const detailElement = document.getElementById('lightDetail');
+            detailElement.innerHTML = `
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    <!-- 照明の詳細情報 -->
+                    <div class="lg:col-span-1 order-2 lg:order-1">
+                        <div class="space-y-3">
+                            <h1 class="font-noto text-lg font-bold text-white mb-3">
+                                ${currentLight.name}
+                            </h1>
+                            
+                            <div class="space-y-3 text-sm">
+                                <div>
+                                    <p class="font-noto text-gray-400 mb-1">場所</p>
+                                    <p class="font-noto text-white">${currentLight.location}</p>
+                                </div>
+
+                                <div>
+                                    <p class="font-noto text-gray-400 mb-1">カテゴリ</p>
+                                    <p class="font-noto text-white">${currentLight.space_type}</p>
+                                </div>
+
+                                <div>
+                                    <p class="font-noto text-gray-400 mb-1">空間における役割</p>
+                                    <p class="font-noto text-white leading-relaxed text-xs">
+                                        ${currentLight.role_memo}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 照明の写真とスイッチ -->
+                    <div class="lg:col-span-2 order-1 lg:order-2">
+                        <div class="relative">
+                            <!-- メイン写真 -->
+                            <div class="aspect-[4/3] relative bg-gray-800 rounded-lg overflow-hidden mb-6">
+                                <img id="detailImage" 
+                                     src="${isDetailLightOn ? currentLight.image_on : currentLight.image_off}" 
+                                     alt="${currentLight.name}" 
+                                     class="w-full h-full object-cover transition-all duration-500">
+                            </div>
+
+                            <!-- 物理スイッチ -->
+                            <div class="flex justify-end">
+                                <div class="flex flex-col items-center gap-3">
+                                    <button id="switchButton" 
+                                            class="physical-switch ${isDetailLightOn ? 'on' : ''}" 
+                                            onclick="toggleDetailLight()">
+                                    </button>
+                                    <span id="switchStatus" class="text-gray-400 text-sm font-noto">
+                                        ${isDetailLightOn ? 'ON' : 'OFF'}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function toggleDetailLight() {
+            isDetailLightOn = !isDetailLightOn;
+            const imageElement = document.getElementById('detailImage');
+            const switchButton = document.getElementById('switchButton');
+            const switchStatus = document.getElementById('switchStatus');
+
+            imageElement.src = isDetailLightOn ? currentLight.image_on : currentLight.image_off;
+            
+            if (isDetailLightOn) {
+                switchButton.classList.add('on');
+                switchStatus.textContent = 'ON';
+            } else {
+                switchButton.classList.remove('on');
+                switchStatus.textContent = 'OFF';
+            }
+        }
+
+        // ページ読み込み時に実行
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(() => {
+                renderLightGrid();
+            }, 500);
+        });
+    </script>
+</body>
+</html>
