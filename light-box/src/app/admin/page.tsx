@@ -1,8 +1,11 @@
+import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { LightForm } from './LightForm'
 import { LightList } from './LightList'
 
 export default function AdminPage() {
+  // 本番環境では404にする（管理画面はローカル限定）
+  if (process.env.NODE_ENV === 'production') notFound()
   return (
     <div className="min-h-screen bg-gray-900 text-white">
       <header className="py-6 px-6 border-b border-gray-800">
