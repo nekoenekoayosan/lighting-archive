@@ -74,6 +74,8 @@ function LightCard({ light }: LightCardProps) {
         className="light-card bg-gray-800 rounded-lg overflow-hidden cursor-pointer"
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
+        onTouchStart={() => setIsHovered(true)}
+        onTouchEnd={() => setIsHovered(false)}
       >
         <div className="aspect-[4/3] relative bg-gray-700">
           <Image
