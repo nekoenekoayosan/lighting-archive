@@ -71,13 +71,13 @@ function LightCard({ light }: LightCardProps) {
   return (
     <Link href={`/lights/${light.id}`}>
       <div 
-        className="light-card bg-gray-800 rounded-lg overflow-hidden cursor-pointer"
+        className="light-card bg-[#3d3d3d] rounded-lg overflow-hidden cursor-pointer"
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
         onTouchStart={() => setIsHovered(true)}
         onTouchEnd={() => setIsHovered(false)}
       >
-        <div className="aspect-[4/3] relative bg-gray-700">
+        <div className="aspect-[4/3] relative bg-[#333333]">
           <Image
             src={isHovered ? light.image_on : light.image_off}
             alt={`${light.name} - ${isHovered ? '点灯' : '消灯'}`}

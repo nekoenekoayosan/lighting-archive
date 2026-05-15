@@ -2,8 +2,8 @@
 
 :root {
   /* light box のダークテーマカラー */
-  --background: #1a1a1a;
-  --background-card: #222222;
+  --background: #545454;
+  --background-card: #444444;
   --foreground: #ffffff;
   --foreground-muted: #a0a0a0;
 }

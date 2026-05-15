@@ -20,7 +20,7 @@ export function LightDetail({ light }: LightDetailProps) {
   }, [light.image_gif])
 
   return (
-    <div className="min-h-screen bg-[#1a1a1a]">
+    <div className="min-h-screen bg-[#545454]">
       {/* ヘッダー */}
       <header className="py-6 px-6">
         <div className="max-w-6xl mx-auto flex items-center justify-between">
@@ -85,7 +85,7 @@ export function LightDetail({ light }: LightDetailProps) {
             <div className="lg:col-span-2 order-1 lg:order-2">
               <div className="relative">
                 {/* メイン写真 */}
-                <div className="aspect-[4/3] relative bg-gray-800 rounded-lg overflow-hidden mb-6">
+                <div className="aspect-[4/3] relative bg-[#3d3d3d] rounded-lg overflow-hidden mb-6">
                   {showGif && light.image_gif ? (
                     // 時々GIFを表示（30%の確率で）
                     <Image

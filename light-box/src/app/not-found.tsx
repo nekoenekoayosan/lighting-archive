@@ -2,7 +2,7 @@ import Link from 'next/link'
 
 export default function NotFound() {
   return (
-    <div className="min-h-screen bg-[#1a1a1a] flex items-center justify-center">
+    <div className="min-h-screen bg-[#545454] flex items-center justify-center">
       <div className="text-center">
         <h1 className="font-ciclo text-6xl text-white mb-4">404</h1>
         <p className="font-noto text-gray-400 text-lg mb-8">お探しの照明が見つかりません</p>
