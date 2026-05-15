@@ -72,16 +72,38 @@ export const addLight = async (light: LightInsert) => {
 
 // 照明を削除
 export const deleteLight = async (id: number) => {
-  const { error } = await lightsTable().delete().eq('id', id)
-  return { error }
+  const res = await fetch('/api/delete-light', {
+    method: 'DELETE',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ id }),
+  })
+  const json = await res.json()
+  if (!res.ok) return { error: new Error(json.error || '削除失敗') }
+  return { error: null }
 }
 
 // 公開状態を切り替え
 export const toggleLightPublic = async (id: number, isPublic: boolean) => {
-  const { error } = await lightsTable()
-    .update({ is_public: isPublic })
-    .eq('id', id)
-  return { error }
+  const res = await fetch('/api/update-light', {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ id, is_public: isPublic }),
+  })
+  const json = await res.json()
+  if (!res.ok) return { error: new Error(json.error || '更新失敗') }
+  return { error: null }
+}
+
+// 照明を更新
+export const updateLight = async (id: number, update: LightUpdate) => {
+  const res = await fetch('/api/update-light', {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ id, ...update }),
+  })
+  const json = await res.json()
+  if (!res.ok) return { data: null, error: new Error(json.error || '更新失敗') }
+  return { data: json.data as Light | null, error: null }
 }
 
 // 画像を Supabase Storage にアップロードして公開URLを返す
