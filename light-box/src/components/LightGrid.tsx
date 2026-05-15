@@ -77,8 +77,8 @@ function LightCard({ light }: LightCardProps) {
       >
         <div className="aspect-[4/3] relative bg-gray-700">
           <Image
-            src={isHovered ? light.image_off : light.image_on}
-            alt={`${light.name} - ${isHovered ? '消灯' : '点灯'}`}
+            src={isHovered ? light.image_on : light.image_off}
+            alt={`${light.name} - ${isHovered ? '点灯' : '消灯'}`}
             fill
             className="object-cover transition-opacity duration-300"
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
