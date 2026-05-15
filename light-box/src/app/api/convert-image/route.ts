@@ -44,7 +44,7 @@ export async function POST(req: NextRequest) {
 }
 
 function jpegResponse(data: Uint8Array, filename: string) {
-  return new NextResponse(data, {
+  return new NextResponse(Buffer.from(data), {
     headers: {
       'Content-Type': 'image/jpeg',
       'Content-Disposition': `inline; filename="${filename}"`,

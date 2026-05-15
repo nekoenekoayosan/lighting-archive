@@ -1,5 +1,5 @@
 import { createClient } from '@supabase/supabase-js'
-import type { Light, LightInsert } from '@/types/lights'
+import type { Light, LightInsert, LightUpdate } from '@/types/lights'
 
 // Supabaseの設定
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co'
