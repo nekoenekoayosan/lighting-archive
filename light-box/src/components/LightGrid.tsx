@@ -79,7 +79,7 @@ function LightCard({ light, index }: LightCardProps) {
       >
         {/* 写真 — 周囲にカード色を残してフレームにする */}
         <div className="px-3 pt-3">
-          <div className="aspect-[4/3] relative rounded overflow-hidden">
+          <div className="aspect-[4/3] relative rounded overflow-hidden border border-white/15">
             <Image
               src={isHovered ? light.image_on : light.image_off}
               alt={`${light.name} - ${isHovered ? '点灯' : '消灯'}`}
