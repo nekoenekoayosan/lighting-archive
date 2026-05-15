@@ -7,6 +7,11 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "via.placeholder.com",
       },
+      {
+        // Supabase Storageの画像を許可する
+        protocol: "https",
+        hostname: "ipkdxqfdacdsjavxtfnu.supabase.co",
+      },
     ],
   },
 };
