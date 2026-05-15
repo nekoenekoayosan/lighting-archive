@@ -77,8 +77,8 @@ function LightCard({ light, index }: LightCardProps) {
         onTouchStart={() => setIsHovered(true)}
         onTouchEnd={() => setIsHovered(false)}
       >
-        {/* 写真 */}
-        <div className="aspect-[4/3] relative">
+        {/* 写真 — 内側は黒くして光が浮かび上がる演出 */}
+        <div className="aspect-[4/3] relative bg-black">
           <Image
             src={isHovered ? light.image_on : light.image_off}
             alt={`${light.name} - ${isHovered ? '点灯' : '消灯'}`}
