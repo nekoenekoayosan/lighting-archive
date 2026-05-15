@@ -71,21 +71,23 @@ function LightCard({ light, index }: LightCardProps) {
   return (
     <Link href={`/lights/${light.id}`}>
       <div
-        className="light-card bg-[#3d3d3d] rounded-lg overflow-hidden cursor-pointer"
+        className="light-card bg-[#1a1a1a] rounded-lg overflow-hidden cursor-pointer"
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
         onTouchStart={() => setIsHovered(true)}
         onTouchEnd={() => setIsHovered(false)}
       >
-        {/* 写真 — 内側は黒くして光が浮かび上がる演出 */}
-        <div className="aspect-[4/3] relative bg-black">
-          <Image
-            src={isHovered ? light.image_on : light.image_off}
-            alt={`${light.name} - ${isHovered ? '点灯' : '消灯'}`}
-            fill
-            className="object-cover transition-opacity duration-500"
-            sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
-          />
+        {/* 写真 — 周囲にカード色を残してフレームにする */}
+        <div className="px-3 pt-3">
+          <div className="aspect-[4/3] relative rounded overflow-hidden">
+            <Image
+              src={isHovered ? light.image_on : light.image_off}
+              alt={`${light.name} - ${isHovered ? '点灯' : '消灯'}`}
+              fill
+              className="object-cover transition-opacity duration-500"
+              sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
+            />
+          </div>
         </div>
 
         {/* キャプション — 図録スタイル */}
