@@ -20,7 +20,7 @@ export function LightDetail({ light }: LightDetailProps) {
   }, [light.image_gif])
 
   return (
-    <div className="min-h-screen bg-gray-900">
+    <div className="min-h-screen bg-[#1a1a1a]">
       {/* ヘッダー */}
       <header className="py-6 px-6">
         <div className="max-w-6xl mx-auto flex items-center justify-between">

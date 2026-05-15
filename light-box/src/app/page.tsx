@@ -2,7 +2,7 @@ import { LightGrid } from '@/components/LightGrid'
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-gray-900">
+    <div className="min-h-screen bg-[#1a1a1a]">
       {/* ヘッダー */}
       <header className="py-8 px-6 text-center">
         <h1 className="font-ciclo text-4xl md:text-5xl text-white tracking-wide">

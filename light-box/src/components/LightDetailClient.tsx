@@ -39,7 +39,7 @@ export function LightDetailClient({ lightId }: LightDetailClientProps) {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-900 flex items-center justify-center">
+      <div className="min-h-screen bg-[#1a1a1a] flex items-center justify-center">
         <div className="text-gray-400">読み込み中...</div>
       </div>
     )
@@ -47,7 +47,7 @@ export function LightDetailClient({ lightId }: LightDetailClientProps) {
 
   if (error || !light) {
     return (
-      <div className="min-h-screen bg-gray-900 flex items-center justify-center">
+      <div className="min-h-screen bg-[#1a1a1a] flex items-center justify-center">
         <div className="text-center">
           <p className="text-red-400 mb-4">{error || '照明が見つかりません'}</p>
           <button

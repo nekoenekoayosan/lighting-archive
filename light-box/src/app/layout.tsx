@@ -31,7 +31,7 @@ export default function RootLayout({
         {/* Adobe Fonts（Typekit）から Ciclo Display を読み込む */}
         <link rel="stylesheet" href="https://use.typekit.net/bbq1sls.css" />
       </head>
-      <body className="min-h-full flex flex-col bg-gray-900 text-white font-noto">{children}</body>
+      <body className="min-h-full flex flex-col bg-[#1a1a1a] text-white font-noto">{children}</body>
     </html>
   );
 }
