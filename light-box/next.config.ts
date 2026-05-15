@@ -11,6 +11,7 @@ const nextConfig: NextConfig = {
         // Supabase Storageの画像を許可する
         protocol: "https",
         hostname: "ipkdxqfdacdsjavxtfnu.supabase.co",
+        pathname: "/**",
       },
     ],
   },
