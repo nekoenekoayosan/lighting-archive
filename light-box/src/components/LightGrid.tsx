@@ -71,14 +71,14 @@ function LightCard({ light, index }: LightCardProps) {
   return (
     <Link href={`/lights/${light.id}`}>
       <div
-        className="group cursor-pointer"
+        className="light-card bg-[#3d3d3d] rounded-lg overflow-hidden cursor-pointer"
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
         onTouchStart={() => setIsHovered(true)}
         onTouchEnd={() => setIsHovered(false)}
       >
-        {/* 写真 — カード背景なし、シャープな角 */}
-        <div className="aspect-[4/3] relative overflow-hidden">
+        {/* 写真 */}
+        <div className="aspect-[4/3] relative">
           <Image
             src={isHovered ? light.image_on : light.image_off}
             alt={`${light.name} - ${isHovered ? '点灯' : '消灯'}`}
@@ -89,7 +89,7 @@ function LightCard({ light, index }: LightCardProps) {
         </div>
 
         {/* キャプション — 図録スタイル */}
-        <div className="mt-2.5 border-t border-white/15 pt-2">
+        <div className="px-4 py-3">
           <div className="flex items-baseline gap-2">
             <span className="font-noto text-[10px] text-white/35 tabular-nums tracking-wider">
               {String(index + 1).padStart(2, '0')}
